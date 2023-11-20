@@ -1,5 +1,6 @@
 @testable import Cryptopals
 import EulerTools
+import WordTools
 import XCTest
 
 final class Set1Tests: XCTestCase {
@@ -39,16 +40,17 @@ final class Set1Tests: XCTestCase {
     func testChallenge3SingleByteXor() throws {
         let cypher = try "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736".asHexData
         print(cypher.asStringJoined())
-        let analysis = FrequencyAnalysis(cypher)
-        print(analysis.frequenciesDesc)
+        let frequencies = Analysis(cypher)
+        print(frequencies.descending)
 
-        for letter in String.uppercaseLetters.utf8 {
+        for letter in Ascii.String.uppercaseLetters.utf8 {
             let xored = try cypher.xor(letter)
+            let compared = Analysis(xored).compareWithEnglish()
             let message = try xored.asASCIIString
-            print(letter, UnicodeScalar(letter), message)
+            print(letter, UnicodeScalar(letter), compared.asString(\.asPercent), compared.meanSquared.asTwoDecimals, message)
         }
-        
-        print("\nX", try cypher.xor(cycled: "X".utf8).asASCIIString)
+
+        try print("\nX", cypher.xor(cycled: "X".utf8).asASCIIString)
     }
 
     func testChallenge3Message() throws {
@@ -56,16 +58,16 @@ final class Set1Tests: XCTestCase {
         let messageData = try message.asASCII
         for letter in String.uppercaseLetters {
             let xored = try messageData.xor(letter.asciiValue.unwrapped)
-            print(letter, try xored.asASCIIString)
+            try print(letter, Analysis(xored).compareWithEnglish().meanSquared, xored.asASCIIString)
         }
     }
-    
+
     func testChallenge4() {
         let input = dataFromResource("Set1Challenge4Input.txt")
         let chunks = input.chunks(ofCount: 60)
         for chunk in chunks {
-            let analysis = FrequencyAnalysis(chunk)
-            print(analysis.frequenciesDesc)
+            let analysis = Analysis(chunk)
+            print(analysis.compareWith(.english, orderBy: .valuesDescending))
         }
     }
 }

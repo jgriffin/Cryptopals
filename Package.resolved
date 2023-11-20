@@ -35,6 +35,15 @@
         "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
         "version" : "1.0.2"
       }
+    },
+    {
+      "identity" : "wordtools",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jgriffin/WordTools.git",
+      "state" : {
+        "revision" : "09769290795ca6e05ed47f8620a8e115fe90189e",
+        "version" : "0.1.0"
+      }
     }
   ],
   "version" : 2

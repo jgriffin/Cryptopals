@@ -13,13 +13,4 @@ public extension String {
             }
         }
     }
-
-    var asASCII: Data {
-        get throws {
-            try Data(self.map { try $0.asciiValue.unwrapped })
-        }
-    }
-
-    static let uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    static let lowerecaseLetters = "abcdefghijklmnopqrstuvwxyz"
 }

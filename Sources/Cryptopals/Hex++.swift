@@ -4,14 +4,22 @@
 
 import Algorithms
 import Foundation
+import WordTools
 
-public extension Sequence<UInt8> {
-    var asHexString: String {
-        map { String($0, radix: 16) }.joined()
+public typealias Hex = UInt8
+
+public extension Collection<Letter> {
+    var asHex: [Hex] {
+        get throws {
+            try chunks(ofCount: 2).map { chunk in try Hex(chunk, radix: 16).unwrapped }
+        }
     }
 }
 
 public extension Data {
+    var asHexString: String {
+        map { String($0, radix: 16) }.joined()
+    }
 
     func xor(_ other: Data) throws -> Data {
         guard count == other.count else { throw CryptoError.mismatchedLengths }

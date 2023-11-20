@@ -6,20 +6,24 @@ import EulerTools
 import Foundation
 
 public struct Analysis<Element: Hashable> {
-    let frequencies: [Element: Float]
+    /**
+     Ratios get too small, especially when squared, so let's work in percentages
+     */
+    public typealias Percentages = [Element: Float]
+    let percentages: Percentages
 
-    init(_ frequencies: [Element: Float]) {
-        self.frequencies = frequencies
+    init(_ percentages: Percentages) {
+        self.percentages = percentages
     }
 
     init(_ characters: some Sequence<Element>) {
         let rawCounts = characters.elementCounts()
         let totalCount = rawCounts.map(\.value).reduce(0,+)
-        self.init(rawCounts.mapValues { Float($0) / Float(totalCount) })
+        self.init(rawCounts.mapValues { Float($0) / Float(totalCount) * 100 })
     }
 
     var descending: [Float] {
-        frequencies.values.sorted().reversed()
+        percentages.values.sorted().reversed()
     }
 
     var descendingPercent: String {
@@ -27,8 +31,7 @@ public struct Analysis<Element: Hashable> {
     }
 
     /**
-     returns an array of deltas between Frequencies
-     if orderedByElements
+     returns an array of deltas between percentages, orderedBy in different ways
      */
     func compareWith(
         _ with: Analysis,
@@ -40,17 +43,21 @@ public struct Analysis<Element: Hashable> {
                 .map { $1 - $0 }
         case let .elements(elements):
             elements
-                .map { with.frequencies[$0, default: 0] - frequencies[$0, default: 0] }
-        case .elementsOfSortedValues:
-            with.frequencies.sorted(by: \.value).reversed().map(\.key)
-                .map { with.frequencies[$0, default: 0] - frequencies[$0, default: 0] }
+                .map { with.percentages[$0, default: 0] - percentages[$0, default: 0] }
+        case .elementsOfSortedWithValues:
+            with.percentages.sorted(by: \.value).reversed().map(\.key)
+                .map { with.percentages[$0, default: 0] - percentages[$0, default: 0] }
         }
     }
 
     enum OrderedBy {
+        // sort both sets of values and compare them
         case valuesDescending
+        // ordered according to sequence of elements (e.g. a-z)
         case elements([Element])
-        case elementsOfSortedValues
+        // ordered according to the elements corresponding to sorted with values
+        // interesting for english letter frequency order
+        case elementsOfSortedWithValues
     }
 }
 
@@ -65,19 +72,19 @@ public extension Analysis where Element == Character {
     ])
 
     func compareWithEnglish() -> [Float] {
-        compareWith(.english, orderBy: .elementsOfSortedValues)
+        compareWith(.english, orderBy: .elementsOfSortedWithValues)
     }
 }
 
 public extension Analysis where Element == UInt8 {
     static let english = Analysis(.init(uniqueKeysWithValues:
-        Analysis<Character>.english.frequencies.map { char, value in
+        Analysis<Character>.english.percentages.map { char, value in
             (char.asciiValue!, value)
         }
     ))
 
     func compareWithEnglish() -> [Float] {
-        compareWith(.english, orderBy: .elementsOfSortedValues)
+        compareWith(.english, orderBy: .elementsOfSortedWithValues)
     }
 }
 

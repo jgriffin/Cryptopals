@@ -5,15 +5,15 @@
 import Foundation
 
 public extension BinaryFloatingPoint {
-    var percent: String {
+    var asPercent: String {
         NumberFormatter.percent.string(for: self)!
     }
 
-    var oneDecimal: String {
+    var asOneDecimal: String {
         NumberFormatter.oneDecimal.string(for: self)!
     }
 
-    var twoDecimals: String {
+    var asTwoDecimals: String {
         NumberFormatter.twoDecimals.string(for: self)!
     }
 }
