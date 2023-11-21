@@ -1,5 +1,6 @@
 import Cryptopals
 import EulerTools
+import WordLists
 import WordTools
 import XCTest
 
@@ -36,16 +37,22 @@ final class Set1Tests: XCTestCase {
     }
 
     func testChallenge3SingleByteXor() throws {
+        let wordlist = try Wordlist.mit_wordlist_10000.data.asAscii
+        let counts = ElementCounts(wordlist).map(ElementMapper.uppercasedOrDrop)
+        let probs = counts.asProbabilies
+        let bayes = BayesianProbability<Ascii>(
+            probBGivenA: { b in probs[b, default: 0.001] },
+            probB: { b in 0.005 }
+        )
+
         let cypher = try "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736".asHexValues
         print(cypher)
 
-        let counts = ElementCounts(cypher)
-        print("\(asPercentages: counts)")
-
         for letter in Ascii.uppercaseLetters {
             let xored = try cypher.xor(letter)
+            let prob = bayes.probA(Float(1) / 26, givenBs: xored)
             let message = xored.asAsciiString
-            print(letter.asAsciiCharacter ?? "\(letter)", message)
+            print(letter.asAsciiCharacter ?? "\(letter)", prob, message)
         }
 
         try print("\nX", cypher.xor(cycled: "X".utf8).asAsciiString)
@@ -66,7 +73,7 @@ final class Set1Tests: XCTestCase {
     func testChallenge4() throws {
         let asciiChunks = dataFromResource("Set1Challenge4Input.txt").asAscii.split(separator: .newline)
         let chunks = try asciiChunks.map { chunk in try chunk.asHexValues }
-        
+
         for chunk in chunks.enumerated() {
             let counts = ElementCounts(chunk.element)
             print("\(chunk.offset)\t\(chunk.element.asAsciiString)")
