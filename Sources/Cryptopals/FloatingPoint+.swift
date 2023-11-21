@@ -4,20 +4,6 @@
 
 import Foundation
 
-public extension BinaryFloatingPoint {
-    var percent: String {
-        NumberFormatter.percent.string(for: self)!
-    }
-
-    var oneDecimal: String {
-        NumberFormatter.oneDecimal.string(for: self)!
-    }
-
-    var twoDecimals: String {
-        NumberFormatter.twoDecimals.string(for: self)!
-    }
-}
-
 public extension Sequence where Element: BinaryFloatingPoint {
     /**
      Sequence string mapping elements with supplied transform

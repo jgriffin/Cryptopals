@@ -1,26 +1,25 @@
-@testable import Cryptopals
+import Cryptopals
 import EulerTools
+import WordTools
 import XCTest
 
 final class Set1Tests: XCTestCase {
     func testDataFromHex() throws {
-        let testHex = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
-        let check = "733910932107105108108105110103321211111171143298114971051103210810510710132973211211110511511111011111711532109117115104114111111109"
+        let testHexString = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
+        let checkValues: [UInt8] = [73, 39, 109, 32, 107, 105, 108, 108, 105, 110, 103, 32, 121, 111, 117, 114, 32, 98, 114, 97, 105, 110, 32, 108, 105, 107, 101, 32, 97, 32, 112, 111, 105, 115, 111, 110, 111, 117, 115, 32, 109, 117, 115, 104, 114, 111, 111, 109]
 
-        let data = try testHex.asHexData
-        let result = data.asStringJoined()
-        XCTAssertEqual(result, check)
+        let hexValues = try testHexString.asHexValues
 
-        let resultHex = data.asHexString
-        XCTAssertEqual(resultHex, testHex)
+        XCTAssertEqual(try testHexString.asHexValues, checkValues)
+        XCTAssertEqual(hexValues.asHexString, testHexString)
     }
 
     func testChallenge1ConvertHexToBase64() throws {
         let testHex = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
         let check = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t"
 
-        let data = try testHex.asHexData
-        let base64 = data.base64EncodedString()
+        let hexValues = try testHex.asHexValues
+        let base64 = hexValues.asBase64String
         XCTAssertEqual(base64, check)
     }
 
@@ -29,43 +28,49 @@ final class Set1Tests: XCTestCase {
         let xorHex = "686974207468652062756c6c277320657965"
         let checkHex = "746865206b696420646f6e277420706c6179"
 
-        let testData = try testHex.asHexData
-        let xorData = try xorHex.asHexData
-        let result = try testData.xor(xorData)
+        let testHexValues = try testHex.asHexValues
+        let xorHexValues = try xorHex.asHexValues
+        let result = try testHexValues.xor(xorHexValues)
 
         XCTAssertEqual(result.asHexString, checkHex)
     }
 
     func testChallenge3SingleByteXor() throws {
-        let cypher = try "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736".asHexData
-        print(cypher.asStringJoined())
-        let analysis = FrequencyAnalysis(cypher)
-        print(analysis.frequenciesDesc)
+        let cypher = try "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736".asHexValues
+        print(cypher)
 
-        for letter in String.uppercaseLetters.utf8 {
+        let counts = ElementCounts(cypher)
+        print("\(asPercentages: counts)")
+
+        for letter in Ascii.uppercaseLetters {
             let xored = try cypher.xor(letter)
-            let message = try xored.asASCIIString
-            print(letter, UnicodeScalar(letter), message)
+            let message = xored.asAsciiString
+            print(letter.asAsciiCharacter ?? "\(letter)", message)
         }
-        
-        print("\nX", try cypher.xor(cycled: "X".utf8).asASCIIString)
+
+        try print("\nX", cypher.xor(cycled: "X".utf8).asAsciiString)
     }
 
     func testChallenge3Message() throws {
         let message = "ETAOIN SHRDLU"
-        let messageData = try message.asASCII
-        for letter in String.uppercaseLetters {
-            let xored = try messageData.xor(letter.asciiValue.unwrapped)
-            print(letter, try xored.asASCIIString)
+        let messageAscii = try message.asAscii
+        print(messageAscii)
+        print(messageAscii.asAsciiString)
+
+        for letter in Ascii(0) ... 126 {
+            let xored = try messageAscii.xor(letter)
+            print(letter.asCharacter, xored.asAsciiString)
         }
     }
-    
-    func testChallenge4() {
-        let input = dataFromResource("Set1Challenge4Input.txt")
-        let chunks = input.chunks(ofCount: 60)
-        for chunk in chunks {
-            let analysis = FrequencyAnalysis(chunk)
-            print(analysis.frequenciesDesc)
+
+    func testChallenge4() throws {
+        let asciiChunks = dataFromResource("Set1Challenge4Input.txt").asAscii.split(separator: .newline)
+        let chunks = try asciiChunks.map { chunk in try chunk.asHexValues }
+        
+        for chunk in chunks.enumerated() {
+            let counts = ElementCounts(chunk.element)
+            print("\(chunk.offset)\t\(chunk.element.asAsciiString)")
+//            print("\(asPercentages: counts)")
         }
     }
 }
