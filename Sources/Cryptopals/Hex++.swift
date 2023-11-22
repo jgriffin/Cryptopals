@@ -7,21 +7,17 @@ import EulerTools
 import Foundation
 
 public extension Sequence<UInt8> {
-    var asAsciiString: String {
-        map { $0.asAsciiCharacter ?? .tilde }.asString
-    }
-
     var asHexAscii: [Ascii] {
         reduce(into: [Ascii]()) { result, digit in
             result.append(.hexLetters[Int(digit >> 4)])
-            result.append(.hexLetters[Int(digit & 0xf)])
+            result.append(.hexLetters[Int(digit & 0xF)])
         }
     }
 
     var asHexCharacters: [Character] {
         reduce(into: [Character]()) { result, digit in
             result.append(.hexLetters[Int(digit >> 4)])
-            result.append(.hexLetters[Int(digit & 0xf)])
+            result.append(.hexLetters[Int(digit & 0xF)])
         }
     }
 
@@ -48,8 +44,8 @@ public extension Collection where Element: Letter {
 }
 
 public extension Collection where Element: BinaryInteger {
-    func xor(_ other: some Collection<Element>) throws -> [Element] {
-        guard count == other.count else { throw CryptoError.mismatchedLengths }
+    func xor(_ other: some Collection<Element>) -> [Element] {
+        assert(count == other.count)
         return zip(self, other).map { pair in pair.0 ^ pair.1 }
     }
 

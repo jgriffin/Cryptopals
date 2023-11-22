@@ -12,11 +12,13 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "Cryptopals",
-            targets: ["Cryptopals"]),
+            targets: ["Cryptopals"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-algorithms.git", from: "1.0.0"),
-        .package(url: "https://github.com/jgriffin/EulerTools.git", from: "0.3.0"),
+        // .package(url: "https://github.com/jgriffin/EulerTools.git", from: "0.3.0"),
+        .package(path: "../EulerTools"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -26,7 +28,8 @@ let package = Package(
             dependencies: [
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "EulerTools", package: "EulerTools"),
-            ]),
+            ]
+        ),
         .testTarget(
             name: "CryptopalsTests",
             dependencies: [
@@ -35,5 +38,6 @@ let package = Package(
                 .product(name: "EulerTools", package: "EulerTools"),
             ],
             resources: [.process("resources")]
-),
-    ])
+        ),
+    ]
+)

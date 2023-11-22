@@ -10,15 +10,6 @@ extension XCTestCase {
         Bundle.module.url(forResource: filename, withExtension: nil)
     }
 
-    func stringFromResource(_ name: String) -> String {
-        guard let resourceURL = resourceURL(filename: name),
-              let string = try? String(contentsOf: resourceURL)
-        else {
-            fatalError()
-        }
-        return string
-    }
-
     func dataFromResource(_ name: String) -> Data {
         guard let resourceURL = resourceURL(filename: name),
               let data = try? Data(contentsOf: resourceURL)
@@ -26,5 +17,14 @@ extension XCTestCase {
             fatalError()
         }
         return data
+    }
+
+    func stringFromResource(_ name: String) -> String {
+        guard let resourceURL = resourceURL(filename: name),
+              let string = try? String(contentsOf: resourceURL)
+        else {
+            fatalError()
+        }
+        return string
     }
 }
