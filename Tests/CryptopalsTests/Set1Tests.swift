@@ -1,5 +1,4 @@
 import Cryptopals
-import EulerTools
 import WordLists
 import WordTools
 import XCTest
@@ -37,22 +36,21 @@ final class Set1Tests: XCTestCase {
     }
 
     func testChallenge3SingleByteXor() throws {
-        let wordlist = try Wordlist.mit_wordlist_10000.data.asAscii
-        let counts = ElementCounts(wordlist).map(ElementMapper.uppercasedOrDrop)
-        let probs = counts.asProbabilies
-        let bayes = BayesianProbability<Ascii>(
-            probBGivenA: { b in probs[b, default: 0.001] },
-            probB: { b in 0.005 }
-        )
+        let wordlist = try Wordlist.mit_wordlist_10000.data.asAscii.compactMap(.newlineToSpace)
+        let wordlistCounts = ElementCounts(wordlist.windows(ofCount: 2))
 
         let cypher = try "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736".asHexValues
-        print(cypher)
 
-        for letter in Ascii.uppercaseLetters {
-            let xored = try cypher.xor(letter)
-            let prob = bayes.probA(Float(1) / 26, givenBs: xored)
-            let message = xored.asAsciiString
-            print(letter.asAsciiCharacter ?? "\(letter)", prob, message)
+        let letterXoredScores = TextEvaluator.letterXoreds(from: Ascii.uppercaseLetters, in: cypher)
+
+        let mseScoreds = letterXoredScores.map { xoredScore in
+            let xoredCounts = ElementCounts(xoredScore.xored.windows(ofCount: 2))
+            let mse = TextEvaluator.mseExpectedScore(compare: xoredCounts, withModel: wordlistCounts)
+            return (xoredScore: xoredScore, mse: mse)
+        }
+
+        mseScoreds.sorted(by: \.xoredScore.score, thenDesc: \.mse).reversed().forEach {
+            print("\(letter: $0.xoredScore.letter)\t\(dotOne: $0.xoredScore.score)  \($0.mse)\t \($0.xoredScore.xored.asAsciiString)")
         }
 
         try print("\nX", cypher.xor(cycled: "X".utf8).asAsciiString)
@@ -64,20 +62,30 @@ final class Set1Tests: XCTestCase {
         print(messageAscii)
         print(messageAscii.asAsciiString)
 
-        for letter in Ascii(0) ... 126 {
-            let xored = try messageAscii.xor(letter)
-            print(letter.asCharacter, xored.asAsciiString)
+        let xoredScores = TextEvaluator.letterXoreds(from: Ascii.asciiValues, in: messageAscii)
+        xoredScores.forEach { score in
+            print(score.letter.asCharacter, score.xored.asAsciiString)
         }
     }
 
     func testChallenge4() throws {
+        let wordlist = try Wordlist.mit_wordlist_10000.data.asAscii.compactMap(.newlineToSpace)
+        let wordlistCounts = ElementCounts(wordlist.windows(ofCount: 2))
+
         let asciiChunks = dataFromResource("Set1Challenge4Input.txt").asAscii.split(separator: .newline)
         let chunks = try asciiChunks.map { chunk in try chunk.asHexValues }
 
-        for chunk in chunks.enumerated() {
-            let counts = ElementCounts(chunk.element)
-            print("\(chunk.offset)\t\(chunk.element.asAsciiString)")
-//            print("\(asPercentages: counts)")
+        let cidScores = chunks.enumerated().flatMap { cid, chunk in
+            TextEvaluator.letterXoreds(from: Ascii.asciiValues, in: chunk)
+                .map { xScore in
+                    let counts = ElementCounts(xScore.xored.windows(ofCount: 2))
+                    let mse = TextEvaluator.mseExpectedScore(compare: counts, withModel: wordlistCounts)
+                    return (chunkId: cid, xScore: xScore, mse: mse)
+                }
+        }
+
+        cidScores.sorted(by: \.xScore.score, then: \.mse).reversed().prefix(5).forEach { cidScore in
+            print("\(cidScore.chunkId)\t\(cidScore.xScore)\(dotTwo: cidScore.mse)")
         }
     }
 }
