@@ -16,9 +16,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-algorithms.git", from: "1.0.0"),
-        .package(url: "https://github.com/jgriffin/EulerTools.git", from: "0.2.3"),
-        // .package(url: "https://github.com/jgriffin/WordTools.git", from: "0.1.0"),
-        .package(path: "../WordTools"),
+        .package(url: "https://github.com/jgriffin/EulerTools.git", from: "0.3.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -28,7 +26,6 @@ let package = Package(
             dependencies: [
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "EulerTools", package: "EulerTools"),
-                .product(name: "WordTools", package: "WordTools"),
             ]),
         .testTarget(
             name: "CryptopalsTests",
@@ -36,7 +33,6 @@ let package = Package(
                 "Cryptopals",
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "EulerTools", package: "EulerTools"),
-                .product(name: "WordTools", package: "WordTools"),
             ],
             resources: [.process("resources")]
 ),

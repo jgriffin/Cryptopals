@@ -1,6 +1,5 @@
 import Cryptopals
-import WordLists
-import WordTools
+import EulerTools
 import XCTest
 
 final class Set1Tests: XCTestCase {
@@ -11,7 +10,7 @@ final class Set1Tests: XCTestCase {
         let hexValues = try testHexString.asHexValues
 
         XCTAssertEqual(try testHexString.asHexValues, checkValues)
-        XCTAssertEqual(hexValues.asHexString, testHexString)
+        XCTAssertEqual(hexValues.asHexCharacters, testHexString.asCharacters)
     }
 
     func testChallenge1ConvertHexToBase64() throws {
@@ -24,15 +23,15 @@ final class Set1Tests: XCTestCase {
     }
 
     func testChallenge2Xor() throws {
-        let testHex = "1c0111001f010100061a024b53535009181c"
-        let xorHex = "686974207468652062756c6c277320657965"
-        let checkHex = "746865206b696420646f6e277420706c6179"
+        let testHex = try "1c0111001f010100061a024b53535009181c".asAscii
+        let xorHex = try "686974207468652062756c6c277320657965".asAscii
+        let checkHex = try "746865206b696420646f6e277420706c6179".asAscii
 
         let testHexValues = try testHex.asHexValues
         let xorHexValues = try xorHex.asHexValues
         let result = try testHexValues.xor(xorHexValues)
 
-        XCTAssertEqual(result.asHexString, checkHex)
+        XCTAssertEqual(result.asHexAscii, checkHex)
     }
 
     func testChallenge3SingleByteXor() throws {
@@ -53,7 +52,7 @@ final class Set1Tests: XCTestCase {
             print("\(letter: $0.xoredScore.letter)\t\(dotOne: $0.xoredScore.score)  \($0.mse)\t \($0.xoredScore.xored.asAsciiString)")
         }
 
-        try print("\nX", cypher.xor(cycled: "X".utf8).asAsciiString)
+        print("\nX", cypher.xor(cycled: "X".utf8).asAsciiString)
     }
 
     func testChallenge3Message() throws {
@@ -88,4 +87,25 @@ final class Set1Tests: XCTestCase {
             print("\(cidScore.chunkId)\t\(cidScore.xScore)\(dotTwo: cidScore.mse)")
         }
     }
+
+    func testChallenge5RepeatingXor() throws {
+        let key = try "ICE".asAscii
+        
+        let message = try """
+        Burning 'em, if you ain't quick and nimble
+        I go crazy when I hear a cymbal
+        """.asAscii
+        
+        let check = try """
+        0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272
+        a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f
+        """.asAscii
+        
+        let encoded = message.xor(cycled: key).asHexAscii
+        print("\(letters: encoded)")
+        print("\(letters: check)")
+        
+        XCTAssertEqual(encoded, check.filter { $0 != .newline })
+    }
+
 }
