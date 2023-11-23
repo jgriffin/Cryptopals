@@ -29,27 +29,28 @@ public enum CryptoTools {
 
     public struct LetterXoredScore: CustomStringConvertible {
         public let letter: Ascii
-        public let score: Float
+        public let score: TextEvaluator.EnglishnessScore
         public let xored: [Ascii]
 
         public var description: String {
-            "\(letter: letter)  \(dotOne: score)  \(xored.prefix(20).asPrintableString)"
+            "\(letter: letter)  \(score)\t\(xored.prefix(20).asPrintableString)"
         }
     }
 
     public static func letterXoredScores(
         from letters: [Ascii],
-        withMinTextualScore: Float = 0.9,
+        minTextualScore: Float = 0.9,
         in sample: some Collection<Ascii>
     ) -> [LetterXoredScore] {
         letters.lazy
-            .map { letter in
+            .compactMap { letter in
                 let xored = sample.map { $0 ^ letter }
-                let score = TextEvaluator.textualLettersScore(xored)
+                guard let score = TextEvaluator.englishnessScore(minTextualScore: minTextualScore, xored) else {
+                    return nil
+                }
                 return LetterXoredScore(letter: letter, score: score, xored: xored)
             }
-            .filter { $0.score >= withMinTextualScore }
-            .sorted(by: \.score).reversed()
+            .sorted(by: \.score.chi2).reversed()
     }
 
     public struct BlockLetterXoredScores: CustomStringConvertible {
@@ -66,7 +67,7 @@ public enum CryptoTools {
         public var topLetters: [Ascii] {
             xorScores.map(\.letter)
         }
-        
+
         public var description: String {
             "block \(blockId):\t \(xorScores.prefix(5).map(\.description).joined(separator: "\t"))"
         }
@@ -83,7 +84,7 @@ public enum CryptoTools {
         return transposedBlocks.enumerated().map { blockId, block -> BlockLetterXoredScores in
             let xoredScores = letterXoredScores(
                 from: values,
-                withMinTextualScore: withMinTextualScore,
+                minTextualScore: withMinTextualScore,
                 in: block
             )
 
