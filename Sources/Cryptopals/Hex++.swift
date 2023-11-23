@@ -25,6 +25,10 @@ public extension Sequence<UInt8> {
         map { String($0) }.joined()
     }
 
+    var asBase64Data: Data {
+        Data(self).base64EncodedData()
+    }
+
     var asBase64String: String {
         Data(self).base64EncodedString()
     }
