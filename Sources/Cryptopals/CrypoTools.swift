@@ -5,12 +5,25 @@
 import EulerTools
 
 public enum CryptoTools {
-    // MARK: normalizedHammingDisance
+    // MARK: normHammingForKeysizes
 
-    public static func normalizedDistanceForKeysizes(
+    public struct KeysizeDistance: Comparable, CustomStringConvertible {
+        public let keysize: Int
+        public let meanNormDistance: Float
+
+        public var description: String {
+            "size: \(keysize) normDist: \(dotTwo: meanNormDistance)"
+        }
+
+        public static func < (lhs: KeysizeDistance, rhs: KeysizeDistance) -> Bool {
+            lhs.meanNormDistance < rhs.meanNormDistance
+        }
+    }
+
+    public static func normHammingForKeysizes(
         keysizes: [Int] = (1 ... 40).asArray,
         _ input: [Ascii]
-    ) -> [(keysize: Int, meanNormDistance: Float)] {
+    ) -> [KeysizeDistance] {
         keysizes
             .map { keysize in
                 let chunks = input.chunks(ofCount: keysize)
@@ -20,20 +33,20 @@ public enum CryptoTools {
                         HammingDistance.bitsBetween(window.first!, window.last!)
                     }
                 let meanDistance = Float(distances.reduce(0,+)) / Float(keysize)
-                return (keysize: keysize, meanNormDistance: meanDistance)
+                return KeysizeDistance(keysize: keysize, meanNormDistance: meanDistance)
             }
-            .sorted(by: \.meanNormDistance)
+            .sorted()
     }
 
     // MARK: XOR block score
 
     public struct LetterXoredScore: CustomStringConvertible {
         public let letter: Ascii
-        public let score: TextEvaluator.EnglishnessScore
+        public let englishness: Englishness
         public let xored: [Ascii]
 
         public var description: String {
-            "\(letter: letter)  \(score)\t\(xored.prefix(20).asPrintableString)"
+            "\(letter: letter)  \(englishness)\t\(xored.prefix(20).asPrintableString)"
         }
     }
 
@@ -45,12 +58,12 @@ public enum CryptoTools {
         letters.lazy
             .compactMap { letter in
                 let xored = sample.map { $0 ^ letter }
-                guard let score = TextEvaluator.englishnessScore(minTextualScore: minTextualScore, xored) else {
+                guard let englishness = Englishness(minTextual: minTextualScore, xored) else {
                     return nil
                 }
-                return LetterXoredScore(letter: letter, score: score, xored: xored)
+                return LetterXoredScore(letter: letter, englishness: englishness, xored: xored)
             }
-            .sorted(by: \.score.chi2).reversed()
+            .sorted(by: \.englishness).reversed()
     }
 
     public struct BlockLetterXoredScores: CustomStringConvertible {

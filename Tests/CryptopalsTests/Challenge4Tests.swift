@@ -11,7 +11,7 @@ final class Challenge4Tests: XCTestCase {
         let wordlist = try Wordlist.mit_wordlist_10000.data.asAscii(.newlinesToSpace)
         let wordlistCounts = ElementCounts(wordlist)
 
-        let asciiChunks = try dataFromResource("Challenge4Input.txt").asAsciiSplitNewlines()
+        let asciiChunks = try Self.resourceData("Challenge4Input.txt").asAsciiSplitNewlines()
         let chunks = try asciiChunks.map { chunk in try chunk.asHexValues }
 
         let cidScores = chunks.enumerated().flatMap { cid, chunk in

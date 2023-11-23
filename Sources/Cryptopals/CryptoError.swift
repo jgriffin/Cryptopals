@@ -7,6 +7,7 @@ import Foundation
 
 enum CryptoError: Error {
     case invalidASCII
+    case invalidHex
     case mismatchedLengths
     case invalidParameter(String)
     case encryptionError(CCCryptorStatus)

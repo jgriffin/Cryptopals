@@ -34,11 +34,11 @@ final class Challenge6Tests: XCTestCase {
     }
 
     func testChallenge() throws {
-        let cypherBase64Data = dataFromResource("Challenge6Input.txt")
+        let cypherBase64Data = try Self.resourceData("Challenge6Input.txt")
         let cypher = Data(base64Encoded: cypherBase64Data, options: .ignoreUnknownCharacters)!.asArray
         // print("\ncypher prefix:", cypher.prefix(50).asPrintableString)
 
-        let keysizes = CryptoTools.normalizedDistanceForKeysizes(cypher)
+        let keysizes = CryptoTools.normHammingForKeysizes(cypher)
         // print("\nkey\tNorm Distance")
         // keysizes.prefix(5).forEach { print("\($0.keysize)\t\($0.meanNormDistance)") }
 
@@ -67,7 +67,7 @@ final class Challenge6Tests: XCTestCase {
     }
 
     func testChallengeKeysize29() throws {
-        let cypherBase64Data = dataFromResource("Challenge6Input.txt")
+        let cypherBase64Data = try Self.resourceData("Challenge6Input.txt")
         let cypher = Data(base64Encoded: cypherBase64Data, options: .ignoreUnknownCharacters)!.asArray
 
         let keysize = 29

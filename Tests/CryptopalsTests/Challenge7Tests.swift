@@ -29,7 +29,7 @@ final class Challenge7Tests: XCTestCase {
     }
 
     func testLoadChallenge() throws {
-        let cypherBase64 = dataFromResource("Challenge7Input.txt")
+        let cypherBase64 = try Self.resourceData("Challenge7Input.txt")
         let cyphertext = try Data(base64Encoded: cypherBase64, options: .ignoreUnknownCharacters).unwrapped.asArray
         let key = try "YELLOW SUBMARINE".asAscii
         let iv = [UInt8](repeating: 0, count: 16)

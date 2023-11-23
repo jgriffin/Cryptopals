@@ -12,7 +12,7 @@ final class Challenge3Tests: XCTestCase {
 
         let xorScores = CryptoTools.letterXoredScores(from: Ascii.uppercaseLetters, in: cypher)
         xorScores.forEach { x in
-            print("\(letter: x.letter)\t\(dotOne: x.score.textual)  \(dotOne: x.score.chi2)\t\(x.xored.asPrintableString)")
+            print("\(letter: x.letter)\t\(x.englishness)\t\(x.xored.asPrintableString)")
         }
 
         print("\nX", cypher.xor(cycled: "X".utf8).asPrintableString)
