@@ -1,4 +1,5 @@
 import Cryptopals
+import CryptoSwift
 import EulerTools
 import XCTest
 
@@ -13,13 +14,11 @@ final class Challenge8Tests: XCTestCase {
 
     func testYellowSubmarine() throws {
         let key = try "YELLOW SUBMARINE".asAscii
-        let iv = [UInt8](repeating: 0, count: 16)
+        let aes = try AES(key: key, blockMode: ECB())
 
         let plaintexts = cyphertexts.enumerated()
             .compactMap { offset, cyphertext -> (offset: Int, plaintext: [UInt8], englishness: Englishness)? in
-                let plaintext = try? CryptoTools.decryptAES_ECB(key: key, iv: iv, cyphertext: cyphertext)
-
-                guard let plaintext,
+                guard let plaintext = try? aes.decrypt(cyphertext),
                       let englishness = Englishness(minTextual: 0, plaintext)
                 else {
                     return nil

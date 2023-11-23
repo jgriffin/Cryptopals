@@ -29,7 +29,7 @@ final class Challenge1Tests: XCTestCase {
 
         let testHexValues = try testHex.asHexValues
         let xorHexValues = try xorHex.asHexValues
-        let result = try testHexValues.xor(xorHexValues)
+        let result = testHexValues.xor(xorHexValues)
 
         XCTAssertEqual(result.asHexAscii, checkHex)
     }

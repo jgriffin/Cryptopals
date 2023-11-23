@@ -19,7 +19,7 @@ public extension CryptoTools {
     ///     constraints on its length.
     /// - Returns: The encrypted data; it’s length with always be an even multiple of 16.
 
-    static func encryptAES_ECB(
+    private static func encryptAES_ECB(
         key: [UInt8],
         iv: [UInt8],
         plaintext: [UInt8]
@@ -58,14 +58,14 @@ public extension CryptoTools {
         return cyphertext
     }
 
-    static func ensurePaddedForECB(_ plaintext: inout [UInt8]) {
+    private static func ensurePaddedForECB(_ plaintext: inout [UInt8]) {
         let paddingCount = kCCBlockSizeAES128 - plaintext.count % kCCBlockSizeAES128
 
         guard paddingCount != 0 else { return }
         plaintext += Array(repeating: UInt8(paddingCount), count: paddingCount)
     }
 
-    static func decryptAES_ECB(
+    private static func decryptAES_ECB(
         key: [UInt8],
         iv: [UInt8],
         cyphertext: [UInt8]
