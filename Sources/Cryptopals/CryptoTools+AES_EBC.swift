@@ -5,7 +5,6 @@
 import CommonCrypto
 import EulerTools
 
-// MARK: - https://developer.apple.com/forums/thread/687212
 
 public extension CryptoTools {
     /// Encrypts data using AES with PKCS#7 padding in CBC mode.
