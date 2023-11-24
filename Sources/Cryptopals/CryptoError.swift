@@ -6,10 +6,14 @@ import CommonCrypto
 import Foundation
 
 enum CryptoError: Error {
+    case notYetImplemented
     case invalidASCII
     case invalidHex
     case mismatchedLengths
-    case invalidParameter(String)
+
+    case invalidKeyLength
+    case invalidInitializationVector
+    case invalidPadding
     case encryptionError(CCCryptorStatus)
     case decryptionError(CCCryptorStatus)
 }

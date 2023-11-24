@@ -24,12 +24,8 @@ public extension CryptoTools {
         iv: [UInt8],
         plaintext: [UInt8]
     ) throws -> [UInt8] {
-        guard [128, 192, 256].contains(key.count * 8) else {
-            throw CryptoError.invalidParameter("invalid key length: \(key.count)")
-        }
-        guard iv.count == kCCBlockSizeAES128 else {
-            throw CryptoError.invalidParameter("invalid iv length: \(iv.count)")
-        }
+        guard [128, 192, 256].contains(key.count * 8) else { throw CryptoError.invalidKeyLength }
+        guard iv.count == kCCBlockSizeAES128 else { throw CryptoError.invalidInitializationVector }
 
         var cyphertext = [UInt8](repeating: 0, count: plaintext.count + kCCBlockSizeAES128)
         var cyphertextCount = 0
@@ -70,12 +66,8 @@ public extension CryptoTools {
         iv: [UInt8],
         cyphertext: [UInt8]
     ) throws -> [UInt8] {
-        guard [128, 192, 256].contains(key.count * 8) else {
-            throw CryptoError.invalidParameter("invalid key length: \(key.count)")
-        }
-        guard iv.count == 16 else {
-            throw CryptoError.invalidParameter("invalid iv length: \(iv.count)")
-        }
+        guard [128, 192, 256].contains(key.count * 8) else { throw CryptoError.invalidKeyLength        }
+        guard iv.count == 16 else {throw CryptoError.invalidInitializationVector }
 
         // Padding can expand the data on encryption, but on decryption the data can
         // only shrink so we use the cyphertext size as our plaintext size.
