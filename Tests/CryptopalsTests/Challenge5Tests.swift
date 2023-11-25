@@ -21,8 +21,8 @@ final class Challenge5Tests: XCTestCase {
         """.asAscii
 
         let encoded = message.xor(cycled: key).asHexAscii
-        print(encoded.asPrintableString)
-        print(check.asPrintableString)
+        print(encoded.asPrintable)
+        print(check.asPrintable)
 
         XCTAssertEqual(encoded, check.filter { $0 != .newline })
     }

@@ -10,7 +10,7 @@ final class Challenge7Tests: XCTestCase {
 
         let aes = try AES(key: key, blockMode: ECB())
         let cyphertext = try aes.encrypt(plaintext)
-        print(cyphertext.asPrintableString)
+        print(cyphertext.asPrintable)
         let cyphertext2 = try aes.encrypt(plaintext)
         XCTAssertEqual(cyphertext, cyphertext2)
 
@@ -29,7 +29,7 @@ final class Challenge7Tests: XCTestCase {
         let aes = try AES(key: key, blockMode: ECB())
         let plaintext = try aes.decrypt(cyphertext)
 
-        print(plaintext.prefix(20).asPrintableString, "I'm back and I'm rin")
-        print(plaintext.suffix(20).asPrintableString, "at funky music ␤····")
+        print(plaintext.prefix(20).asPrintable, "I'm back and I'm rin")
+        print(plaintext.suffix(20).asPrintable, "at funky music ␤····")
     }
 }

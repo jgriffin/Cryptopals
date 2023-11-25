@@ -5,7 +5,7 @@
 import CommonCrypto
 import Foundation
 
-enum CryptoError: Error {
+public enum CryptoError: Error {
     case notYetImplemented
     case invalidASCII
     case invalidHex
@@ -16,4 +16,6 @@ enum CryptoError: Error {
     case invalidPadding
     case encryptionError(CCCryptorStatus)
     case decryptionError(CCCryptorStatus)
+
+    case expectedValueMissing
 }

@@ -45,6 +45,6 @@ final class Challenge10Tests: XCTestCase {
             iv: iv,
             cyphertext: cyphertext
         )
-        XCTAssertEqual(plaintext.prefix(30).asPrintableString, "I'm back and I'm ringin' the b")
+        XCTAssertEqual(plaintext.prefix(30).asPrintable, "I'm back and I'm ringin' the b")
     }
 }

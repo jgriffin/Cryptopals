@@ -46,7 +46,7 @@ public enum CryptoTools {
         public let xored: [Ascii]
 
         public var description: String {
-            "\(letter: letter)  \(englishness)\t\(xored.prefix(20).asPrintableString)"
+            "\(letter: letter)  \(englishness)\t\(xored.prefix(20).asPrintable)"
         }
     }
 

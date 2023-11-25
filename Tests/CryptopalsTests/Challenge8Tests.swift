@@ -28,7 +28,7 @@ final class Challenge8Tests: XCTestCase {
             }
 
         plaintexts.sorted(by: \.englishness).prefix(5).forEach { x in
-            print("\(x.offset)\t \(x.englishness)\t\(x.plaintext.asPrintableString)")
+            print("\(x.offset)\t \(x.englishness)\t\(x.plaintext.asPrintable)")
         }
     }
 
@@ -48,7 +48,7 @@ final class Challenge8Tests: XCTestCase {
             return (offset: offset, repeats: adjacents)
         }
         chunkPrefixes.filter { !$0.1.isEmpty }.forEach { offset, stacked in
-            print("\(offset)\n\(stacked.map(\.asPrintableString).joinedByNewlines)")
+            print("\(offset)\n\(stacked.map(\.asPrintable).joinedByNewlines)")
         }
     }
 }

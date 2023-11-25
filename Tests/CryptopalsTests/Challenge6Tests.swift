@@ -27,7 +27,7 @@ final class Challenge6Tests: XCTestCase {
         let topLetters = blockScores.map(\.topLetters)
 
         let keyCandidates = CartesianProduct(topLetters).map { $0 }
-        print(keyCandidates.map(\.asPrintableString).joined(by: .space).asString)
+        print(keyCandidates.map(\.asPrintable).joined(by: .space).asString)
 
 //        let topKey = blockScores.map { $0.xorScores.first?.letter ?? .underscore }
 //        XCTAssertEqual(topKey.asPrintableString, key.asPrintableString)
@@ -57,7 +57,7 @@ final class Challenge6Tests: XCTestCase {
             print("keysize \(keysize)")
             let keyCandidates = CartesianProduct(blockScores.map(\.topLetters)).map { $0 }
             keyCandidates.prefix(5).forEach { key in
-                print(key.asPrintableString)
+                print(key.asPrintable)
             }
 
             if let key = keyCandidates.first {

@@ -12,10 +12,10 @@ final class Challenge3Tests: XCTestCase {
 
         let xorScores = CryptoTools.letterXoredScores(from: Ascii.uppercaseLetters, in: cypher)
         xorScores.forEach { x in
-            print("\(letter: x.letter)\t\(x.englishness)\t\(x.xored.asPrintableString)")
+            print("\(letter: x.letter)\t\(x.englishness)\t\(x.xored.asPrintable)")
         }
 
-        print("\nX", cypher.xor(cycled: "X".utf8).asPrintableString)
+        print("\nX", cypher.xor(cycled: "X".utf8).asPrintable)
     }
 
     func testChallenge3Message() throws {
@@ -24,7 +24,7 @@ final class Challenge3Tests: XCTestCase {
 
         let xoredScores = CryptoTools.letterXoredScores(from: Ascii.asciiValues, in: messageAscii)
         xoredScores.forEach { score in
-            print(score.letter.asCharacter, score.xored.asPrintableString)
+            print(score.letter.asCharacter, score.xored.asPrintable)
         }
     }
 }
