@@ -12,8 +12,12 @@ public extension [UInt8] {
     static func random(count: Int) -> [UInt8] {
         (0 ..< count).map { _ in UInt8.random(in: .min ... .max) }
     }
-    
+
     func asPrintableChunks(of count: Int = 16) -> String {
         chunks(ofCount: count).map(\.asPrintable).joined(separator: "  ")
+    }
+
+    func asChunkHashes(of count: Int = 16) -> String {
+        "\(chunks(ofCount: count).map(\.hashValue))"
     }
 }

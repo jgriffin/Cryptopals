@@ -21,6 +21,10 @@ public extension Sequence<UInt8> {
         }
     }
 
+    var asHexString: String {
+        String(asHexCharacters)
+    }
+
     var asDigitString: String {
         map { String($0) }.joined()
     }
